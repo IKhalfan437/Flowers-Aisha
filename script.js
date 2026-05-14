@@ -354,7 +354,7 @@ html, body {
 /* Flower head */
 .flower-head {
   position: absolute;
-  bottom: 185px;
+  bottom: 180px;
   left: 50%;
   transform: translateX(-50%);
   width: 140px;
