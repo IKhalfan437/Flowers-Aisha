@@ -285,10 +285,12 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   width: 60px;
+  height: 220px;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
 }
 
 /* Stem */
@@ -354,7 +356,7 @@ html, body {
 /* Flower head */
 .flower-head {
   position: absolute;
-  bottom: 215px;
+  top: -150px;
   left: 50%;
   transform: translateX(-50%);
   width: 140px;
