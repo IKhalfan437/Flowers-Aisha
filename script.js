@@ -1,262 +1,215 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:wght@300;400&display=swap');
+/* ─────────────────────────────────────────────
+   Flower Animation  •  script.js
+   ───────────────────────────────────────────── */
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+// ── Flower data ──────────────────────────────
+const FLOWERS = [
+  // { petalCount, petalColor, petalGlow, centerColor, centerGlow,
+  //   bloomSize, stemH, stemW, leafSize, lean, swayDur, swayDelay, growDelay }
+  { petalCount:8, petalColor:'#ff79c6', petalGlow:'rgba(255,121,198,0.6)', centerColor:'#f8d56b', centerGlow:'rgba(248,213,107,0.7)', bloomSize:62, stemH:150, stemW:5, leafSize:26, lean:-3, swayDur:3.2, swayDelay:0,   growDelay:0.1 },
+  { petalCount:6, petalColor:'#c792ea', petalGlow:'rgba(199,146,234,0.6)', centerColor:'#fff',    centerGlow:'rgba(255,255,255,0.6)', bloomSize:48, stemH:120, stemW:4, leafSize:20, lean:2,  swayDur:2.8, swayDelay:0.4, growDelay:0.4 },
+  { petalCount:10,petalColor:'#ff9de2', petalGlow:'rgba(255,157,226,0.6)', centerColor:'#f8d56b', centerGlow:'rgba(248,213,107,0.7)', bloomSize:70, stemH:175, stemW:6, leafSize:30, lean:-1, swayDur:3.6, swayDelay:0.2, growDelay:0.7 },
+  { petalCount:7, petalColor:'#ffd6e8', petalGlow:'rgba(255,214,232,0.5)', centerColor:'#ff79c6', centerGlow:'rgba(255,121,198,0.6)', bloomSize:54, stemH:135, stemW:4, leafSize:22, lean:3,  swayDur:3.0, swayDelay:0.6, growDelay:1.0 },
+  { petalCount:8, petalColor:'#a0e7ff', petalGlow:'rgba(160,231,255,0.5)', centerColor:'#fff',    centerGlow:'rgba(255,255,255,0.6)', bloomSize:58, stemH:160, stemW:5, leafSize:24, lean:-2, swayDur:2.6, swayDelay:0.1, growDelay:1.3 },
+  { petalCount:6, petalColor:'#ffb3de', petalGlow:'rgba(255,179,222,0.5)', centerColor:'#f8d56b', centerGlow:'rgba(248,213,107,0.7)', bloomSize:44, stemH:110, stemW:4, leafSize:18, lean:1,  swayDur:3.4, swayDelay:0.5, growDelay:1.6 },
+  { petalCount:9, petalColor:'#e89fff', petalGlow:'rgba(232,159,255,0.5)', centerColor:'#f8d56b', centerGlow:'rgba(248,213,107,0.7)', bloomSize:65, stemH:155, stemW:5, leafSize:26, lean:-3, swayDur:3.1, swayDelay:0.3, growDelay:1.9 },
+  { petalCount:5, petalColor:'#ff79c6', petalGlow:'rgba(255,121,198,0.6)', centerColor:'#c792ea', centerGlow:'rgba(199,146,234,0.6)', bloomSize:50, stemH:125, stemW:4, leafSize:20, lean:2,  swayDur:2.9, swayDelay:0.7, growDelay:2.2 },
+];
+
+function buildFlower(f) {
+  const wrap = document.createElement('div');
+  wrap.className = 'flower';
+  wrap.style.cssText = `
+    --sway-duration:${f.swayDur}s;
+    --sway-delay:${f.swayDelay}s;
+    --grow-delay:${f.growDelay}s;
+    --lean:${f.lean}deg;
+    margin: 0 ${Math.random() * 18 + 6}px;
+  `;
+
+  // Bloom
+  const bloom = document.createElement('div');
+  bloom.className = 'bloom';
+  bloom.style.cssText = `--bloom-size:${f.bloomSize}px; width:${f.bloomSize}px; height:${f.bloomSize}px;`;
+
+  // Petals
+  for (let i = 0; i < f.petalCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const rot = (360 / f.petalCount) * i;
+    const delay = (f.growDelay + 0.6 + i * 0.06).toFixed(2);
+    p.style.cssText = `
+      --rot:${rot}deg;
+      --petal-color:${f.petalColor};
+      --petal-glow:${f.petalGlow};
+      --petal-delay:${delay}s;
+      width:${f.bloomSize * 0.38}px;
+      height:${f.bloomSize * 0.5}px;
+    `;
+    bloom.appendChild(p);
+  }
+
+  // Center
+  const center = document.createElement('div');
+  center.className = 'center';
+  center.style.cssText = `--center-color:${f.centerColor}; --center-glow:${f.centerGlow};`;
+  bloom.appendChild(center);
+
+  // Stem
+  const stem = document.createElement('div');
+  stem.className = 'stem';
+  stem.style.cssText = `--stem-height:${f.stemH}px; --stem-width:${f.stemW}px; height:${f.stemH}px; width:${f.stemW}px;`;
+
+  // Leaves
+  ['left','right'].forEach((side, idx) => {
+    const leaf = document.createElement('div');
+    leaf.className = `leaf ${side}`;
+    leaf.style.cssText = `--leaf-size:${f.leafSize}px; width:${f.leafSize}px; height:${f.leafSize * 0.55}px; --leaf-top:${45 + idx * 18}%;  top:${45 + idx * 18}%;`;
+    stem.appendChild(leaf);
+  });
+
+  wrap.appendChild(bloom);
+  wrap.appendChild(stem);
+  return wrap;
 }
 
-:root {
-  --sky-top: #1a0533;
-  --sky-mid: #3b0f6e;
-  --sky-low: #8b2fc9;
-  --ground-color: #1a0533;
-  --accent-pink: #ff79c6;
-  --accent-gold: #f8d56b;
-  --accent-lavender: #c792ea;
-  --stem-green: #4caf78;
+// Populate garden
+const garden = document.getElementById('garden');
+FLOWERS.forEach(f => garden.appendChild(buildFlower(f)));
+
+
+// ── Particle System (canvas) ──────────────────
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const PETAL_COLORS  = ['#ff79c6','#c792ea','#ffb3de','#e89fff','#ffd6e8','#a0e7ff'];
+const STAR_COUNT    = 120;
+const FIREFLY_COUNT = 28;
+const FALL_COUNT    = 35;
+
+// Stars
+const stars = Array.from({ length: STAR_COUNT }, () => ({
+  x: Math.random(),
+  y: Math.random() * 0.7,
+  r: Math.random() * 1.4 + 0.3,
+  alpha: Math.random() * 0.5 + 0.3,
+  twinkleSpeed: Math.random() * 0.02 + 0.005,
+  twinkleOffset: Math.random() * Math.PI * 2,
+}));
+
+// Fireflies
+const fireflies = Array.from({ length: FIREFLY_COUNT }, () => ({
+  x: Math.random(),
+  y: 0.4 + Math.random() * 0.5,
+  r: Math.random() * 2.5 + 1,
+  color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)],
+  vx: (Math.random() - 0.5) * 0.0008,
+  vy: (Math.random() - 0.5) * 0.0005,
+  alpha: Math.random(),
+  alphaDir: Math.random() > 0.5 ? 1 : -1,
+  alphaSpeed: Math.random() * 0.015 + 0.005,
+}));
+
+// Falling petals
+const fallingPetals = Array.from({ length: FALL_COUNT }, () => spawnPetal());
+
+function spawnPetal() {
+  return {
+    x: Math.random(),
+    y: -0.05 - Math.random() * 0.1,
+    size: Math.random() * 8 + 4,
+    color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)],
+    vy: Math.random() * 0.0012 + 0.0006,
+    vx: (Math.random() - 0.5) * 0.0008,
+    rot: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.04,
+    alpha: Math.random() * 0.6 + 0.3,
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: Math.random() * 0.04 + 0.01,
+  };
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #0d001a;
+function drawPetalShape(ctx, x, y, size, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.beginPath();
+  ctx.ellipse(0, -size / 2, size * 0.38, size * 0.55, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
-.scene {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(
-    180deg,
-    var(--sky-top) 0%,
-    var(--sky-mid) 45%,
-    var(--sky-low) 75%,
-    #c2507a 90%,
-    #e8887a 100%
-  );
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+let t = 0;
+function render() {
+  t += 0.016;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const W = canvas.width, H = canvas.height;
+
+  // Stars
+  stars.forEach(s => {
+    const alpha = s.alpha + 0.25 * Math.sin(t * s.twinkleSpeed * 60 + s.twinkleOffset);
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${Math.max(0.1, alpha)})`;
+    ctx.fill();
+  });
+
+  // Fireflies
+  fireflies.forEach(f => {
+    f.x += f.vx + Math.sin(t * 0.7 + f.twinkleOffset) * 0.0003;
+    f.y += f.vy + Math.cos(t * 0.5 + f.twinkleOffset) * 0.0002;
+    if (f.x < 0) f.x = 1; if (f.x > 1) f.x = 0;
+    if (f.y < 0.3) f.vy = Math.abs(f.vy);
+    if (f.y > 0.95) f.vy = -Math.abs(f.vy);
+    f.alpha += f.alphaDir * f.alphaSpeed;
+    if (f.alpha > 1) { f.alpha = 1; f.alphaDir = -1; }
+    if (f.alpha < 0) { f.alpha = 0; f.alphaDir = 1; }
+
+    const grd = ctx.createRadialGradient(f.x*W, f.y*H, 0, f.x*W, f.y*H, f.r * 6);
+    grd.addColorStop(0, f.color.replace(')', `,${f.alpha})`).replace('rgb','rgba').replace('#', 'rgba(') );
+    // simpler:
+    ctx.beginPath();
+    ctx.arc(f.x * W, f.y * H, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = hexToRgba(f.color, f.alpha);
+    ctx.shadowBlur = 14;
+    ctx.shadowColor = f.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  // Falling petals
+  fallingPetals.forEach((p, i) => {
+    p.wobble += p.wobbleSpeed;
+    p.x += p.vx + Math.sin(p.wobble) * 0.0004;
+    p.y += p.vy;
+    p.rot += p.rotSpeed;
+    if (p.y > 1.05) fallingPetals[i] = spawnPetal();
+
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    drawPetalShape(ctx, p.x * W, p.y * H, p.size, p.rot);
+    ctx.globalAlpha = 1;
+  });
+
+  requestAnimationFrame(render);
 }
 
-/* Particle canvas */
-#particleCanvas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
+// tiny hex→rgba helper
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
 }
 
-/* Message */
-.message {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  z-index: 10;
-  animation: fadeInDown 2s ease forwards;
-  opacity: 0;
-}
+// patch firefly twinkle offset
+fireflies.forEach(f => f.twinkleOffset = Math.random() * Math.PI * 2);
 
-.heart {
-  display: block;
-  font-size: 2.5rem;
-  color: var(--accent-pink);
-  animation: heartbeat 1.6s ease-in-out infinite;
-  margin-bottom: 0.3rem;
-  filter: drop-shadow(0 0 12px var(--accent-pink));
-}
-
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  14%       { transform: scale(1.25); }
-  28%       { transform: scale(1); }
-  42%       { transform: scale(1.18); }
-  70%       { transform: scale(1); }
-}
-
-.message h1 {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: clamp(2.8rem, 7vw, 5.5rem);
-  color: #fff;
-  letter-spacing: 0.04em;
-  text-shadow:
-    0 0 30px rgba(255,121,198,0.7),
-    0 0 80px rgba(199,146,234,0.4),
-    0 2px 6px rgba(0,0,0,0.5);
-  line-height: 1;
-}
-
-.subtitle {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
-  color: rgba(255,255,255,0.65);
-  letter-spacing: 0.35em;
-  text-transform: lowercase;
-  margin-top: 0.6rem;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* Ground */
-.ground {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 14vh;
-  background: linear-gradient(180deg, #2a0d45 0%, #150826 100%);
-  border-radius: 60% 60% 0 0 / 20% 20% 0 0;
-  z-index: 5;
-}
-
-.ground::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: 0;
-  width: 100%;
-  height: 14px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,121,198,0.35) 30%,
-    rgba(248,213,107,0.3) 60%,
-    transparent 100%
-  );
-  filter: blur(4px);
-}
-
-/* Garden container */
-.garden {
-  position: absolute;
-  bottom: 12vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90vw;
-  max-width: 960px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 0;
-  z-index: 6;
-}
-
-/* ─── Individual Flower ─── */
-.flower {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform-origin: bottom center;
-  animation: sway var(--sway-duration, 3s) ease-in-out infinite alternate;
-  animation-delay: var(--sway-delay, 0s);
-  opacity: 0;
-  animation-name: growIn, sway;
-  animation-duration: 1.2s, var(--sway-duration, 3s);
-  animation-delay: var(--grow-delay, 0s), calc(var(--grow-delay, 0s) + 1.2s);
-  animation-timing-function: cubic-bezier(.22,1,.36,1), ease-in-out;
-  animation-fill-mode: forwards, none;
-  animation-iteration-count: 1, infinite;
-}
-
-@keyframes growIn {
-  from { opacity: 0; transform: scaleY(0) translateY(30px); }
-  to   { opacity: 1; transform: scaleY(1) translateY(0); }
-}
-
-@keyframes sway {
-  from { transform: rotate(var(--lean, -2deg)); }
-  to   { transform: rotate(calc(var(--lean, -2deg) + 6deg)); }
-}
-
-/* Stem */
-.stem {
-  width: var(--stem-width, 4px);
-  height: var(--stem-height, 120px);
-  background: linear-gradient(180deg, #5ecc88, var(--stem-green) 60%, #2d7a4f);
-  border-radius: 4px 4px 2px 2px;
-  position: relative;
-}
-
-/* Leaf */
-.leaf {
-  position: absolute;
-  width: var(--leaf-size, 22px);
-  height: calc(var(--leaf-size, 22px) * 0.55);
-  background: linear-gradient(135deg, #5ecc88, #2d8a50);
-  border-radius: 0 80% 0 80%;
-  top: var(--leaf-top, 55%);
-  transform-origin: left center;
-  animation: leafSway 2.5s ease-in-out infinite alternate;
-}
-
-.leaf.left  { left: -140%; transform: scaleX(-1) rotate(-15deg); }
-.leaf.right { right: -140%; transform: rotate(-15deg); }
-
-@keyframes leafSway {
-  from { transform: rotate(-15deg) scaleX(var(--lx, 1)); }
-  to   { transform: rotate(5deg) scaleX(var(--lx, 1)); }
-}
-.leaf.left { --lx: -1; }
-
-/* Bloom head */
-.bloom {
-  position: relative;
-  width: var(--bloom-size, 54px);
-  height: var(--bloom-size, 54px);
-  margin-bottom: -4px;
-}
-
-/* Petals */
-.petal {
-  position: absolute;
-  width: 40%;
-  height: 52%;
-  border-radius: 50% 50% 30% 30%;
-  top: 50%; left: 50%;
-  transform-origin: bottom center;
-  background: var(--petal-color, #ff79c6);
-  filter: drop-shadow(0 0 4px var(--petal-glow, rgba(255,121,198,0.5)));
-  animation: petalBloom 1s ease forwards, petalFloat 3s ease-in-out infinite alternate;
-  animation-delay: var(--petal-delay, 0s), calc(var(--petal-delay, 0s) + 1s);
-  opacity: 0;
-}
-
-@keyframes petalBloom {
-  from { opacity: 0; transform: translate(-50%, -100%) rotate(var(--rot)) scaleY(0); }
-  to   { opacity: 0.92; transform: translate(-50%, -100%) rotate(var(--rot)) scaleY(1); }
-}
-
-@keyframes petalFloat {
-  from { transform: translate(-50%, -100%) rotate(var(--rot)) scaleY(1); }
-  to   { transform: translate(-50%, -100%) rotate(var(--rot)) scaleY(1.06) translateY(-2px); }
-}
-
-/* Center */
-.center {
-  position: absolute;
-  width: 32%;
-  height: 32%;
-  border-radius: 50%;
-  background: var(--center-color, #f8d56b);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px 3px var(--center-glow, rgba(248,213,107,0.6));
-  z-index: 2;
-  animation: centerPulse 2s ease-in-out infinite alternate;
-}
-
-@keyframes centerPulse {
-  from { box-shadow: 0 0 8px 2px var(--center-glow, rgba(248,213,107,0.5)); }
-  to   { box-shadow: 0 0 16px 6px var(--center-glow, rgba(248,213,107,0.8)); }
-}
-
-/* Firefly / falling petal particles drawn on canvas */
+render();
