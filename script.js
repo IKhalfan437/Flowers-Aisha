@@ -319,42 +319,42 @@ html, body {
 }
 .leaf-left {
   background: linear-gradient(135deg, var(--leaf-light), var(--leaf-color));
-  bottom: 130px;
-  left: calc(50% - 54px);
-  transform: rotate(-35deg) scaleX(-1);
+  bottom: 140px;
+  left: calc(50% - 52px);
+  transform: rotate(-30deg) scaleX(-1);
   animation: leafGrowLeft 1.2s ease-out 4.2s forwards;
 }
 .leaf-right {
   background: linear-gradient(135deg, var(--leaf-light), var(--leaf-color));
-  bottom: 150px;
-  left: calc(50% + 4px);
-  transform: rotate(35deg);
+  bottom: 115px;
+  left: calc(50% + 2px);
+  transform: rotate(30deg);
   animation: leafGrowRight 1.2s ease-out 4.6s forwards;
 }
 .leaf-left-low {
   background: linear-gradient(135deg, #81c784, var(--leaf-color));
-  bottom: 80px;
-  left: calc(50% - 46px);
+  bottom: 75px;
+  left: calc(50% - 42px);
   width: 38px;
   height: 18px;
-  transform: rotate(-20deg) scaleX(-1);
+  transform: rotate(-25deg) scaleX(-1);
   animation: leafGrowLeft 1s ease-out 3.8s forwards;
 }
 @keyframes leafGrowLeft {
-  0%   { opacity: 0; transform: rotate(-35deg) scaleX(-1) scale(0); }
-  60%  { opacity: 1; transform: rotate(-35deg) scaleX(-1) scale(1.1); }
-  100% { opacity: 1; transform: rotate(-35deg) scaleX(-1) scale(1); }
+  0%   { opacity: 0; transform: rotate(-30deg) scaleX(-1) scale(0); }
+  60%  { opacity: 1; transform: rotate(-30deg) scaleX(-1) scale(1.1); }
+  100% { opacity: 1; transform: rotate(-30deg) scaleX(-1) scale(1); }
 }
 @keyframes leafGrowRight {
-  0%   { opacity: 0; transform: rotate(35deg) scale(0); }
-  60%  { opacity: 1; transform: rotate(35deg) scale(1.1); }
-  100% { opacity: 1; transform: rotate(35deg) scale(1); }
+  0%   { opacity: 0; transform: rotate(30deg) scale(0); }
+  60%  { opacity: 1; transform: rotate(30deg) scale(1.1); }
+  100% { opacity: 1; transform: rotate(30deg) scale(1); }
 }
 
 /* Flower head */
 .flower-head {
   position: absolute;
-  bottom: 180px;
+  bottom: 155px;
   left: 50%;
   transform: translateX(-50%);
   width: 140px;
@@ -604,13 +604,20 @@ html, body {
 
 .title-card {
   position: fixed;
-  top: 6%;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
   z-index: 30;
   opacity: 0;
   animation: titleFadeIn 2s ease-out 7s forwards;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 18px 40px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
 }
 @keyframes titleFadeIn {
   from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
@@ -621,22 +628,23 @@ html, body {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-size: clamp(2rem, 5vw, 3.5rem);
-  color: white;
+  color: #ffffff;
   text-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.4),
-    0 0 40px rgba(255, 255, 255, 0.2);
-  letter-spacing: 0.04em;
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(255, 200, 200, 0.3);
+  letter-spacing: 0.06em;
   line-height: 1;
 }
 
 .subtitle {
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
-  color: rgba(255, 255, 255, 0.75);
+  font-weight: 400;
+  font-size: clamp(0.9rem, 2vw, 1.15rem);
+  color: rgba(255, 230, 230, 0.95);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   margin-top: 8px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 /* =============================================
